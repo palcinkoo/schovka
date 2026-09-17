@@ -31,7 +31,7 @@ uloží do histórie. Odtiaľ si ju vieš znova zobraziť alebo exportovať ako 
 - **užívateľ** vidí na mape **iba značky, ktoré organizátor povolil** – skryté ciele sú preňho úplne
   neviditeľné (žiadny názov, žiadna fotka)
 - detail cieľa = názov, popis, fotka/video (YouTube/Vimeo/Drive/priame súbory) + „Navigovať sem"
-- zmeny sa užívateľovi zjavia **do ~20 sekúnd**, bez obnovovania stránky a bez deployu
+- zmeny sa užívateľovi zjavia **okamžite** (cez ntfy.sh ping), bez obnovovania stránky a bez deployu
 
 **Navigácia k cieľu**
 - klik na mapu nastaví cieľ 🎯, aplikácia dopočíta trasu
@@ -47,11 +47,17 @@ Aplikácia potrebuje zdieľať zoznam cieľov medzi tebou (adminom) a užívate�
 riešime takto:
 
 ```
-public/destinations.json   ← zdroj pravdy, leží v Githube
+public/destinations.json            ← zdroj pravdy, leží v Githube
         │
-        ├─ užívateľ si ho sťahuje z raw.githubusercontent.com (každých 20 s)
-        └─ admin ho z appky rovno commitne cez GitHub API
+        ├─ čítanie: GitHub API (vždy čerstvé) → raw CDN → súbor v deployi → localStorage
+        ├─ zápis:   GitHub API (token organizátora, uložený len v jeho prehliadači)
+        └─ ping:    ntfy.sh – bez registrácie, bez účtu, zadarmo
 ```
+
+**Ako sa zmena dostane k užívateľovi okamžite:** po uložení appka odošle správu na kanál
+`ntfy.sh/<VITE_NTFY_TOPIC>`; všetky otvorené appky sú naň prihlásené (SSE) a hneď si stiahnu
+čerstvé dáta priamo z GitHub API (ktoré nemá CDN cache). Ak by ntfy nebolo dostupné, appka
+funguje ďalej – dáta sa kontrolujú každých 20 s a po deploye sú čerstvé do ~2 minút.
 
 | | Užívateľ (`https://schovka.onrender.com`) | Organizátor (`…?admin=1`) |
 |---|---|---|
@@ -82,7 +88,8 @@ V admin režime k cieľu pridáš **odkaz** – aplikácia rozpozná typ a zobra
 1. V admin režime rozbaľ **🔑 GitHub token** a vlož **fine-grained token**:
    *Repository access → Only select repositories → schovka*, *Permissions → Contents: Read and write*.
    Token sa uloží **len v tvojom prehliadači** (do repozitára sa nikdy nedostane).
-2. Klikni **💾 Uložiť zmeny** → appka commitne `public/destinations.json` → užívateľ to uvidí do ~20 s.
+2. Klikni **💾 Uložiť zmeny** → appka commitne `public/destinations.json` a odošle ping →
+   užívateľ to uvidí **do 1 – 2 sekúnd**.
 3. Bez tokenu appka zmeny uloží len lokálne a ponúkne ti **JSON na skopírovanie** do súboru.
 
 ### Admin režim
