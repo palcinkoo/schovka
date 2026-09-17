@@ -55,6 +55,11 @@ prehliadač s povolenou geolokáciou (HTTPS alebo `localhost`) a ideálne mobil 
 
 Bez kľúča aplikácia padá späť na priamu čiaru – nič sa nerozbije.
 
+> **Kľúč nikdy necommituj.** Patrí len do `.env` (ktoré je v `.gitignore`) alebo do
+> environment premenných hostingu. Free tier: 40 požiadaviek/min, 2000/deň – pri prekročení
+> aplikácia automaticky zobrazí priamu čiaru s varovaním.
+> Inštrukcie ORS sú anglické, aplikácia ich prekladá do slovenčiny v `src/lib/routing.js`.
+
 ### 2. Supabase (trasy mimo prehliadača)
 
 1. Vytvor projekt na [supabase.com](https://supabase.com).

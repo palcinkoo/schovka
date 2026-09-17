@@ -243,6 +243,7 @@ export default function App() {
 
               {routeBusy && <p className="muted">Počítam trasu…</p>}
               {routeError && <p className="error">{routeError}</p>}
+              {route?.warning && <p className="notice notice--inline">⚠️ {route.warning}</p>}
 
               {route && (
                 <div className="route">

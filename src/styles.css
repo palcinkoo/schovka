@@ -45,6 +45,7 @@ body {
   padding: 11px 13px; border-radius: var(--radius); margin-bottom: 12px; font-size: 13.5px; line-height: 1.5;
 }
 .notice--info { background: #eff6ff; border-color: #bfdbfe; color: #1e3a8a; }
+.notice--inline { margin: 12px 0 0; }
 .notice code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 5px; }
 
 .card {
