@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-17T16:02:54Z",
+  "updated_at": "2026-09-17T16:03:26Z",
   "destinations": [
     {
       "id": "demo-fontana",
@@ -21,7 +21,7 @@
       "note": "Tento cieľ užívateľ nevidí, kým ho v admin režime nepovolíš.",
       "lat": 48.8152,
       "lng": 17.1699,
-      "visible": true,
+      "visible": false,
       "media": []
     }
   ]
