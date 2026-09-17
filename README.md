@@ -1,5 +1,7 @@
 # Schovka 🧭
 
+**Live:** [https://schovka.onrender.com](https://schovka.onrender.com) · **Repo:** [github.com/palcinkoo/schovka](https://github.com/palcinkoo/schovka)
+
 GPS navigácia a záznam trás v prehliadači. Zapneš záznam, ideš sa prejsť/bežať/cykliť,
 aplikácia kreslí tvoju trasu na mapu, počíta čas, vzdialenosť, tempo a po zastavení trasu
 uloží do histórie. Odtiaľ si ju vieš znova zobraziť alebo exportovať ako **GPX**.
@@ -88,6 +90,9 @@ npm run preview      # lokálny náhľad buildu
 
 Repozitár obsahuje [`render.yaml`](render.yaml): v Renderi zvoľ **New → Blueprint** a doplň
 environment premenné. Build: `npm ci && npm run build`, publikuje sa `dist`.
+
+Aktuálny deploy beží na **https://schovka.onrender.com** (statický web, HTTPS → geolokácia
+funguje na mobile). Premenné sú nastavené priamo v Renderi (`VITE_ORS_API_KEY`), nie v repozitári.
 
 > Premenné `VITE_*` sa vkladajú do kódu **pri builde** – po zmene je nutný redeploy.
 > Geolokácia na webe vyžaduje zabezpečený kontext (HTTPS), čo Render spĺňa.
