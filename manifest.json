@@ -1,0 +1,10 @@
+{
+  "name": "Schovka",
+  "short_name": "Schovka",
+  "description": "Hra na schovávačku s mapou a dennými kódmi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": []
+}
