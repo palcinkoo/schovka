@@ -27,6 +27,8 @@ export const icons = {
   start: pin('🟢', 'schovka-pin--start', 28),
   end: pin('🏁', 'schovka-pin--end', 28),
   target: pin('🎯', 'schovka-pin--target'),
+  dest: pin('📍', 'schovka-pin--dest', 32),
+  destHidden: pin('🚫', 'schovka-pin--dest-hidden', 28),
 };
 
 function ClickPicker({ onPick }) {
@@ -62,6 +64,7 @@ export default function MapView({
   lines = [],
   circle = null,
   onPick = null,
+  onMarkerClick = null,
   className = '',
   scrollWheelZoom = true,
 }) {
@@ -101,7 +104,12 @@ export default function MapView({
           ))}
 
         {markers.map((m) => (
-          <Marker key={m.key} position={[m.lat, m.lng]} icon={icons[m.icon] || icons.target}>
+          <Marker
+            key={m.key}
+            position={[m.lat, m.lng]}
+            icon={icons[m.icon] || icons.target}
+            eventHandlers={onMarkerClick ? { click: () => onMarkerClick(m) } : undefined}
+          >
             {m.label && <Popup>{m.label}</Popup>}
           </Marker>
         ))}

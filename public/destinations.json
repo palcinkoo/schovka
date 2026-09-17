@@ -1,0 +1,28 @@
+{
+  "updated_at": "2026-09-17T15:45:00.000Z",
+  "destinations": [
+    {
+      "id": "demo-fontana",
+      "name": "Námestie v Holíči",
+      "note": "Ukážkový cieľ – pri fontáne. Zmeň ho alebo pridaj vlastný v admin režime.",
+      "lat": 48.8103,
+      "lng": 17.1631,
+      "visible": true,
+      "media": [
+        {
+          "type": "image",
+          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Holi%C4%8D_-_n%C3%A1mestie.jpg/640px-Holi%C4%8D_-_n%C3%A1mestie.jpg"
+        }
+      ]
+    },
+    {
+      "id": "demo-skryty",
+      "name": "Skrytý cieľ (ukážka)",
+      "note": "Tento cieľ užívateľ nevidí, kým ho v admin režime nepovolíš.",
+      "lat": 48.8152,
+      "lng": 17.1699,
+      "visible": false,
+      "media": []
+    }
+  ]
+}

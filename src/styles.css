@@ -177,3 +177,59 @@ body {
   .map-card .map { height: 320px; }
   .stat__value { font-size: 17px; }
 }
+
+/* ------------------------------------------------ ciele + admin + médiá */
+.badge--admin { background: #0f172a; color: #fff; border-color: #0f172a; margin-left: 6px; }
+
+.sheet {
+  background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--primary);
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10);
+}
+.sheet__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.sheet__note { margin: 8px 0 0; font-size: 14px; line-height: 1.5; }
+.ok { color: var(--success); }
+.warn { color: #b45309; }
+
+.media { display: grid; gap: 10px; margin-top: 10px; }
+.media__img {
+  width: 100%; max-height: 320px; object-fit: cover;
+  border-radius: 10px; border: 1px solid var(--border); background: #f1f5f9; display: block;
+}
+.media__frame {
+  width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 10px; background: #000;
+}
+
+.place { padding: 12px 0; border-top: 1px solid var(--border); }
+.place--active { background: #eff6ff; border-radius: 10px; padding-inline: 10px; }
+.place--hidden { opacity: 0.72; background: repeating-linear-gradient(45deg, #fff, #fff 8px, #f8fafc 8px, #f8fafc 16px); }
+.place__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.place__name { flex: 1 1 160px; font-weight: 700; }
+
+.media-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.media-list li {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: 12px; padding: 4px 0; border-top: 1px dashed var(--border);
+}
+.media-list__url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+
+.token-box {
+  background: #f8fafc; border: 1px dashed var(--border); border-radius: 10px;
+  padding: 10px 12px; margin-top: 10px;
+}
+
+.json-box {
+  width: 100%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+  border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-top: 10px; background: #0f172a; color: #e2e8f0;
+}
+
+.admin-gate { max-width: 420px; margin: 60px auto; }
+
+.footer-link {
+  border: 0; background: none; color: #94a3b8; font: inherit; font-size: 12px;
+  cursor: pointer; text-decoration: underline; padding: 0;
+}
+.footer-link:hover { color: var(--primary); }
+
+.schovka-pin--dest { background: #dc2626; }
+.schovka-pin--dest-hidden { background: #94a3b8; font-size: 13px; }

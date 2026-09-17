@@ -25,6 +25,14 @@ uloží do histórie. Odtiaľ si ju vieš znova zobraziť alebo exportovať ako 
 - premenovanie, mazanie a **export do GPX** (súbor na stiahnutie, funguje offline)
 - súhrn: počet trás, celková vzdialenosť, celkový čas
 
+**Ciele s fotkou/videom (dve roly)**
+- **organizátor (admin)** pridáva ciele klikom do mapy, píše k nim popis, pridáva **fotky a videá**
+  a rozhoduje, či sú užívateľovi **viditeľné**
+- **užívateľ** vidí na mape **iba značky, ktoré organizátor povolil** – skryté ciele sú preňho úplne
+  neviditeľné (žiadny názov, žiadna fotka)
+- detail cieľa = názov, popis, fotka/video (YouTube/Vimeo/Drive/priame súbory) + „Navigovať sem"
+- zmeny sa užívateľovi zjavia **do ~20 sekúnd**, bez obnovovania stránky a bez deployu
+
 **Navigácia k cieľu**
 - klik na mapu nastaví cieľ 🎯, aplikácia dopočíta trasu
 - profily: 🚶 pešo, 🚴 bicykel, 🚗 auto
@@ -32,6 +40,56 @@ uloží do histórie. Odtiaľ si ju vieš znova zobraziť alebo exportovať ako 
 - bez API kľúča sa použije **priama čiara** a vzdušná vzdialenosť (appka funguje aj offline)
 
 ---
+
+## Ciele a médiá bez backendu (bez Supabase)
+
+Aplikácia potrebuje zdieľať zoznam cieľov medzi tebou (adminom) a užívateľom – bez databázy to
+riešime takto:
+
+```
+public/destinations.json   ← zdroj pravdy, leží v Githube
+        │
+        ├─ užívateľ si ho sťahuje z raw.githubusercontent.com (každých 20 s)
+        └─ admin ho z appky rovno commitne cez GitHub API
+```
+
+| | Užívateľ (`https://schovka.onrender.com`) | Organizátor (`…?admin=1`) |
+|---|---|---|
+| Vidí ciele | len s `"visible": true` | **všetky** (skryté sú preškrtnuté) |
+| Pridávanie / mazanie | – | áno (klik do mapy) |
+| Fotky a videá | áno, ak ich organizátor pridal | áno |
+| Prepínač viditeľnosti | – | áno (jedno kliknutie) |
+
+### Ako pridať fotku alebo video
+
+V admin režime k cieľu pridáš **odkaz** – aplikácia rozpozná typ a zobrazí ho správne:
+
+| Čo pridáš | Príklad | Ako sa zobrazí |
+|---|---|---|
+| Fotka | `https://i.imgur.com/abc.jpg`, priamy `.jpg/.png/.webp` | obrázok |
+| Google Drive fotka | `https://drive.google.com/file/d/ID/view` | obrázok (odkaz sa automaticky upraví) |
+| YouTube | `https://youtu.be/abc123` | prehrávač (iframe) |
+| Vimeo | `https://vimeo.com/123456` | prehrávač (iframe) |
+| Video súbor | `https://…/klip.mp4` | `<video>` s ovládaním |
+| Čokoľvek iné | `https://example.com` | tlačidlo „Otvoriť odkaz" |
+
+> Nahrávanie súboru priamo z appky **nie je možné bez backendu** (niekam sa musí uložiť).
+> Fotku nahraj napr. na Imgur/Drive/Instagram a vlož odkaz – prípadne mi súbor pošli do chatu
+> a ja ho commitnem do `public/media/` (bude dostupný na `https://…/media/fotka.jpg`).
+
+### Ako uložiť zmeny z appky
+
+1. V admin režime rozbaľ **🔑 GitHub token** a vlož **fine-grained token**:
+   *Repository access → Only select repositories → schovka*, *Permissions → Contents: Read and write*.
+   Token sa uloží **len v tvojom prehliadači** (do repozitára sa nikdy nedostane).
+2. Klikni **💾 Uložiť zmeny** → appka commitne `public/destinations.json` → užívateľ to uvidí do ~20 s.
+3. Bez tokenu appka zmeny uloží len lokálne a ponúkne ti **JSON na skopírovanie** do súboru.
+
+### Admin režim
+
+- otvor `https://schovka.onrender.com/?admin=1` (v pätičke je nenápadný prepínač)
+- voliteľne ho zamkni kódom: nastav v Renderi premennú `VITE_ADMIN_CODE`
+- ide o **skrytú adresu**, nie o prihlásenie – na citlivé veci odporúčam Supabase Auth
 
 ## Rýchly štart
 
@@ -108,8 +166,10 @@ funguje na mobile). Premenné sú nastavené priamo v Renderi (`VITE_ORS_API_KEY
 ├── manifest.json           # PWA manifest
 ├── render.yaml             # Render Blueprint (statický deploy)
 ├── vite.config.js
+├── public/
+│   └── destinations.json   # ciele + ich viditeľnosť (zdroj pravdy)
 ├── supabase/
-│   └── schema.sql          # tabuľka tracks + RLS politiky
+│   └── schema.sql          # tabuľka tracks + RLS politiky (voliteľné)
 └── src/
     ├── main.jsx
     ├── App.jsx             # stavy, mapa, navigácia, história
