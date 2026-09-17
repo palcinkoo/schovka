@@ -1,98 +1,70 @@
 -- ============================================================
--- Schovka – schéma databázy (Supabase / PostgreSQL)
+-- Schovka – GPS navigácia a záznam trás (Supabase / PostgreSQL)
 -- Spusti celé v Supabase SQL Editori.
 -- ============================================================
 
 create extension if not exists pgcrypto;
 
 -- ------------------------------------------------------------
--- Denné kódy: hráč zadá kód, aby sa mu odokryla schovka.
+-- Trasy: jeden záznam = jedna zaznamenaná trasa.
+-- points = pole bodov [{lat, lng, acc, t}] vo formáte JSON.
 -- ------------------------------------------------------------
-create table if not exists public.daily_codes (
-  id          uuid primary key default gen_random_uuid(),
-  code        text not null unique,
-  label       text,
-  active      boolean not null default true,
-  expires_at  timestamptz not null,
-  created_at  timestamptz not null default now()
+create table if not exists public.tracks (
+  id            uuid primary key default gen_random_uuid(),
+  name          text,
+  started_at    timestamptz not null,
+  finished_at   timestamptz,
+  distance_m    numeric not null default 0 check (distance_m >= 0),
+  duration_s    integer not null default 0 check (duration_s >= 0),
+  avg_speed_kmh numeric,
+  points        jsonb not null default '[]'::jsonb check (jsonb_typeof(points) = 'array'),
+  created_at    timestamptz not null default now()
 );
 
-create index if not exists daily_codes_code_idx on public.daily_codes (code);
-create index if not exists daily_codes_expires_idx on public.daily_codes (expires_at);
+create index if not exists tracks_started_idx on public.tracks (started_at desc);
 
 -- ------------------------------------------------------------
--- Schovky: jedno miesto = jeden riadok, viazané na denný kód.
+-- RLS – DEMO nastavenie: aplikácia nemá prihlásenie, preto môže
+-- anonymný návštevník trasy čítať aj zapisovať.
+--
+-- ‼️ PRE PRODUKCIU: pridaj prihlásenie a obmedz politiky na
+-- vlastníka riadku (návod na konci súboru).
 -- ------------------------------------------------------------
-create table if not exists public.hides (
-  id          uuid primary key default gen_random_uuid(),
-  code_id     uuid not null references public.daily_codes (id) on delete cascade,
-  lat         double precision not null check (lat between -90 and 90),
-  lng         double precision not null check (lng between -180 and 180),
-  hint        text,
-  note        text,
-  created_at  timestamptz not null default now()
-);
+alter table public.tracks enable row level security;
 
-create index if not exists hides_code_id_idx on public.hides (code_id);
-create index if not exists hides_created_idx on public.hides (created_at desc);
+drop policy if exists "anon select tracks" on public.tracks;
+create policy "anon select tracks" on public.tracks
+  for select to anon, authenticated using (true);
 
--- ------------------------------------------------------------
--- Overenie kódu prebieha výhradne cez túto funkciu.
--- Je SECURITY DEFINER, takže anonymný hráč nevidí celú tabuľku,
--- dostane len schovku k PLATNÉMU (aktívnemu, neexpirovanému) kódu.
--- ------------------------------------------------------------
-create or replace function public.redeem_code(p_code text)
-returns table (
-  hide_id    uuid,
-  lat        double precision,
-  lng        double precision,
-  hint       text,
-  note       text,
-  expires_at timestamptz
-)
-language sql
-security definer
-set search_path = public
-as $$
-  select h.id, h.lat, h.lng, h.hint, h.note, c.expires_at
-  from public.daily_codes c
-  join public.hides h on h.code_id = c.id
-  where c.code = upper(btrim(p_code))
-    and c.active
-    and c.expires_at > now()
-  order by h.created_at desc
-  limit 1;
-$$;
+drop policy if exists "anon insert tracks" on public.tracks;
+create policy "anon insert tracks" on public.tracks
+  for insert to anon, authenticated with check (true);
 
--- Anonymní hráči smú funkciu len spustiť, nie čítať tabuľky priamo.
-revoke all on function public.redeem_code(text) from public;
-grant execute on function public.redeem_code(text) to anon, authenticated;
+drop policy if exists "anon update tracks" on public.tracks;
+create policy "anon update tracks" on public.tracks
+  for update to anon, authenticated using (true) with check (true);
+
+drop policy if exists "anon delete tracks" on public.tracks;
+create policy "anon delete tracks" on public.tracks
+  for delete to anon, authenticated using (true);
 
 -- ------------------------------------------------------------
--- RLS: tabuľky sú zatvorené, číta/zapisuje len prihlásený admin.
+-- Voliteľné obmedzenie veľkosti jednej trasy (počty bodov):
+-- dlhé trasy môžu mať tisíce bodov, zváž ich zjednodušenie
+-- (napr. ukladať každý 3. bod) alebo limit v aplikácii.
 -- ------------------------------------------------------------
-alter table public.daily_codes enable row level security;
-alter table public.hides      enable row level security;
 
-drop policy if exists "admin all daily_codes" on public.daily_codes;
-create policy "admin all daily_codes" on public.daily_codes
-  for all to authenticated using (true) with check (true);
-
-drop policy if exists "admin all hides" on public.hides;
-create policy "admin all hides" on public.hides
-  for all to authenticated using (true) with check (true);
-
--- ------------------------------------------------------------
--- Demo dáta (voliteľné – môžeš zmazať).
--- Najprv si vytvor admin používateľa v Authentication → Users.
--- ------------------------------------------------------------
-insert into public.daily_codes (code, label, expires_at)
-values ('SCHOVKA', 'Ukážkový kód', now() + interval '7 days')
-on conflict (code) do nothing;
-
--- Ukážková schovka (Holíč, námestie):
-insert into public.hides (code_id, lat, lng, hint, note)
-select id, 48.8103, 17.1631, 'Námestie v centre — pri fontáne.', 'Demo schovka'
-from public.daily_codes
-where code = 'SCHOVKA'
-  and not exists (select 1 from public.hides);
+-- ============================================================
+-- PRODUKČNÉ NASTAVENIE (odkomentuj po pridaní prihlásenia):
+-- ============================================================
+-- alter table public.tracks add column if not exists user_id uuid references auth.users (id);
+--
+-- drop policy if exists "anon select tracks"   on public.tracks;
+-- drop policy if exists "anon insert tracks"   on public.tracks;
+-- drop policy if exists "anon update tracks"   on public.tracks;
+-- drop policy if exists "anon delete tracks"   on public.tracks;
+--
+-- create policy "own tracks" on public.tracks
+--   for all to authenticated
+--   using (auth.uid() = user_id)
+--   with check (auth.uid() = user_id);

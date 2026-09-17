@@ -1,7 +1,7 @@
 {
-  "name": "Schovka",
+  "name": "Schovka – GPS navigácia a záznam trás",
   "short_name": "Schovka",
-  "description": "Hra na schovávačku s mapou a dennými kódmi.",
+  "description": "GPS navigácia, záznam trás, história a export GPX.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Schovka – hra na schovávačku s mapou (Leaflet) a dennými kódmi (Vite + React + Supabase).",
+  "description": "Schovka – GPS navigácia a záznam trás (Vite + React + Leaflet + OpenRouteService + Supabase).",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
