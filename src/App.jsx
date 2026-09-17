@@ -11,6 +11,8 @@ import { getUserLocation, formatDistance, formatDuration } from './lib/geo';
 import { downloadGpx } from './lib/gpx';
 import {
   fetchDestinations,
+  subscribeToUpdates,
+  NTFY_TOPIC,
   commitDestinations,
   readLocal,
   saveLocal,
@@ -92,8 +94,8 @@ export default function App() {
       .finally(() => setLocating(false));
   }, []);
 
-  const loadDestinations = useCallback(async () => {
-    const { data, source } = await fetchDestinations();
+  const loadDestinations = useCallback(async (preferFresh = false) => {
+    const { data, source } = await fetchDestinations(preferFresh);
     setDestData(data);
     setDestSource(source);
   }, []);
@@ -102,9 +104,12 @@ export default function App() {
     locate();
     refreshTracks();
     loadDestinations();
-    const id = setInterval(loadDestinations, REFRESH_MS);
+    const id = setInterval(() => loadDestinations(false), REFRESH_MS);
     return () => clearInterval(id);
   }, [locate, refreshTracks, loadDestinations]);
+
+  // okamžité odokrytie: ping od organizátora → stiahnutie čerstvých dát
+  useEffect(() => subscribeToUpdates(() => loadDestinations(true)), [loadDestinations]);
 
   useEffect(() => {
     const p = tracker.current;
@@ -185,7 +190,11 @@ export default function App() {
       await commitDestinations(destData);
       setDestSource('github');
       setShowJson(false);
-      setStatus('✅ Uložené do GitHubu – užívateľ to uvidí do ~20 s.');
+      setStatus(
+        NTFY_TOPIC
+          ? '✅ Uložené – užívatelia to uvidia okamžite.'
+          : '✅ Uložené do GitHubu – užívateľ to uvidí do ~2 minút.',
+      );
       await loadDestinations();
     } catch (e) {
       setShowJson(true);
@@ -460,6 +469,7 @@ export default function App() {
               selectedId={selectedId}
               adding={adding}
               onToggleAdding={() => setAdding((v) => !v)}
+              onRefresh={() => loadDestinations(true)}
               onChange={updateDestData}
               onSave={saveDestinations}
               onSelect={(d) => setSelectedId(d.id === selectedId ? null : d.id)}

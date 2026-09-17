@@ -17,6 +17,7 @@ export default function DestinationsPanel({
   onSelect,
   onFocus,
   onNavigate,
+  onRefresh,
   token,
   onTokenChange,
 }) {
@@ -52,11 +53,16 @@ export default function DestinationsPanel({
             {!admin && ` · ${visible.length} viditeľných`}
           </p>
         </div>
-        {admin && (
-          <button className="btn btn--primary" type="button" onClick={onSave} disabled={saving}>
-            {saving ? 'Ukladám…' : '💾 Uložiť zmeny'}
+        <div className="row row--tight">
+          <button className="btn btn--ghost btn--small" type="button" onClick={onRefresh} title="Načítať najnovšie dáta">
+            🔄 Obnoviť
           </button>
-        )}
+          {admin && (
+            <button className="btn btn--primary" type="button" onClick={onSave} disabled={saving}>
+              {saving ? 'Ukladám…' : '💾 Uložiť zmeny'}
+            </button>
+          )}
+        </div>
       </div>
 
       {status && <p className={status.startsWith('✅') ? 'success' : 'error'}>{status}</p>}
