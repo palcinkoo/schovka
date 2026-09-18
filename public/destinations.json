@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-18T17:17:48.417Z",
+  "updated_at": "2026-09-18T17:18:58.824Z",
   "destinations": [
     {
       "id": "demo-fontana",
@@ -8,15 +8,6 @@
       "lat": 48.8103,
       "lng": 17.1631,
       "visible": false,
-      "media": []
-    },
-    {
-      "id": "demo-skryty",
-      "name": "Skrytý cieľ (ukážka)",
-      "note": "Tu.",
-      "lat": 48.8152,
-      "lng": 17.1699,
-      "visible": true,
       "media": []
     },
     {
