@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-18T16:42:09.340Z",
+  "updated_at": "2026-09-18T16:43:49.389Z",
   "destinations": [
     {
       "id": "demo-fontana",
@@ -13,10 +13,10 @@
     {
       "id": "demo-skryty",
       "name": "Skrytý cieľ (ukážka)",
-      "note": "Tento cieľ užívateľ nevidí, kým ho v admin režime nepovolíš.",
+      "note": "Tu.",
       "lat": 48.8152,
       "lng": 17.1699,
-      "visible": false,
+      "visible": true,
       "media": []
     },
     {
