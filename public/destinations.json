@@ -1,22 +1,13 @@
 {
-  "updated_at": "2026-09-18T17:20:25.353Z",
+  "updated_at": "2026-09-18T17:21:28.124Z",
   "destinations": [
-    {
-      "id": "demo-fontana",
-      "name": "Námestie v Holíči",
-      "note": "Ukážkový cieľ – pri fontáne. Zmeň ho alebo pridaj vlastný v admin režime.",
-      "lat": 48.8103,
-      "lng": 17.1631,
-      "visible": false,
-      "media": []
-    },
     {
       "id": "84e4335a-8849-45ed-b941-0164595f9ff2",
       "name": "Nový cieľ",
       "note": "",
       "lat": 48.878963414468906,
       "lng": 18.045400857934638,
-      "visible": false,
+      "visible": true,
       "media": []
     }
   ]
