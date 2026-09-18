@@ -26,7 +26,10 @@ const ADMIN_CODE = import.meta.env.VITE_ADMIN_CODE || '';
 const REFRESH_MS = 20_000;
 
 export default function App() {
-  const [tab, setTab] = useState('map'); // 'map' | 'places' | 'history'
+  const [tab, setTab] = useState(() => {
+    const isAdminNow = new URLSearchParams(window.location.search).get('admin') === '1';
+    return isAdminNow && !getToken() ? 'places' : 'map';
+  }); // 'map' | 'places' | 'history'
 
   // ---- poloha a mapa
   const [current, setCurrent] = useState(null);
@@ -360,6 +363,18 @@ export default function App() {
         </div>
       )}
 
+      {isAdmin && !token && (
+        <div className="notice notice--setup">
+          <div>
+            <strong>🔑 Chýba GitHub token</strong> – bez neho sa ciele uložia len v tomto telefóne a
+            užívateľ ich neuvidí.
+          </div>
+          <button className="btn btn--small btn--primary" type="button" onClick={() => setTab('places')}>
+            Vložiť token
+          </button>
+        </div>
+      )}
+
       <main className="app__main">
         {tab === 'map' && (
           <>
@@ -574,15 +589,11 @@ export default function App() {
         <span>·</span>
         <span>Ciele: {destSource}</span>
         <span>·</span>
-        <button
-          className="footer-link"
-          type="button"
-          onClick={() => {
-            window.location.search = isAdmin ? '' : '?admin=1';
-          }}
-        >
-          {isAdmin ? 'Užívateľský režim' : 'Režim organizátora'}
-        </button>
+        {isAdmin && (
+          <button className="footer-link" type="button" onClick={() => (window.location.search = '')}>
+            Ukončiť admin
+          </button>
+        )}
       </footer>
     </div>
   );

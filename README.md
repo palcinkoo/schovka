@@ -102,7 +102,9 @@ Jediné, čo treba spraviť raz:
 
 ### Admin režim
 
-- otvor `https://schovka.onrender.com/?admin=1` (v pätičke je nenápadný prepínač)
+- otvor `https://schovka.onrender.com/?admin=1` – **užívateľ tento prepínač nevidí**, je to skrytá
+  adresa (ulož si ju do záložiek). V admin režime sa appka otvorí rovno na záložke **Ciele**,
+  kde ťa privíta žltý banner „🔑 Chýba GitHub token" s poľom na vloženie
 - voliteľne ho zamkni kódom: nastav v Renderi premennú `VITE_ADMIN_CODE`
 - ide o **skrytú adresu**, nie o prihlásenie – na citlivé veci odporúčam Supabase Auth
 

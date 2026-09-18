@@ -247,3 +247,11 @@ body {
 .steps-compact { margin: 8px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: #334155; }
 .steps-compact li { margin-bottom: 2px; }
 .steps-compact code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; }
+
+.notice--setup {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  background: #fef3c7; border-color: #fbbf24; color: #78350f;
+}
+.token-box--needed {
+  background: #fffbeb; border: 2px solid #fbbf24;
+}

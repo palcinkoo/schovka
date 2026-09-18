@@ -87,13 +87,17 @@ export default function DestinationsPanel({
             <button className={`btn ${adding ? 'btn--primary' : ''}`} type="button" onClick={onToggleAdding}>
               {adding ? '📍 Klikni do mapy…' : '➕ Pridať cieľ klikom do mapy'}
             </button>
-            <button className="btn btn--ghost btn--small" type="button" onClick={() => setShowToken((v) => !v)}>
-              {showToken ? 'Skryť GitHub token' : '🔑 GitHub token'}
+            <button
+              className={`btn btn--small ${token ? 'btn--ghost' : 'btn--primary'}`}
+              type="button"
+              onClick={() => setShowToken((v) => !v)}
+            >
+              {token ? '🔑 Token nastavený ✓' : '🔑 Vložiť GitHub token'}
             </button>
           </div>
 
           {showToken && (
-            <div className="token-box">
+            <div className={`token-box ${token ? '' : 'token-box--needed'}`}>
               <label className="label">
                 GitHub token (uloží sa len v tomto prehliadači)
                 <input
