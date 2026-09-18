@@ -8,7 +8,10 @@ export default function DestinationsPanel({
   admin,
   source,
   saving,
-  status,
+  saveState,
+  savedAt,
+  saveError,
+  onSaveNow,
   selectedId,
   adding,
   onToggleAdding,
@@ -57,15 +60,26 @@ export default function DestinationsPanel({
           <button className="btn btn--ghost btn--small" type="button" onClick={onRefresh} title="Načítať najnovšie dáta">
             🔄 Obnoviť
           </button>
-          {admin && (
-            <button className="btn btn--primary" type="button" onClick={onSave} disabled={saving}>
-              {saving ? 'Ukladám…' : '💾 Uložiť zmeny'}
-            </button>
-          )}
         </div>
       </div>
 
-      {status && <p className={status.startsWith('✅') ? 'success' : 'error'}>{status}</p>}
+      <div className="row row--tight autostatus">
+        {saveState === 'saving' && <span className="chip chip--busy">⏳ ukladám…</span>}
+        {saveState === 'saved' && (
+          <span className="chip chip--ok">
+            ✓ uložené{savedAt ? ` ${savedAt.toLocaleTimeString('sk-SK')}` : ''}
+          </span>
+        )}
+        {saveState === 'error' && (
+          <>
+            <span className="chip chip--warn">⚠ neuložené{saveError ? ` – ${saveError}` : ''}</span>
+            <button className="btn btn--small" type="button" onClick={onSaveNow} disabled={saving}>
+              Skúsiť znova
+            </button>
+          </>
+        )}
+        {saveState === 'idle' && <span className="chip">zmeny sa ukladajú automaticky</span>}
+      </div>
 
       {admin && (
         <>

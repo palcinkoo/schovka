@@ -58,9 +58,17 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [status, setStatus] = useState('');
+  const [saveState, setSaveState] = useState('idle'); // idle | saving | saved | error
+  const [savedAt, setSavedAt] = useState(null);
+  const [saveError, setSaveError] = useState('');
   const [showJson, setShowJson] = useState(false);
   const [token, setTokenState] = useState(() => getToken());
+
+  const destDataRef = useRef(destData);
+  destDataRef.current = destData;
+  const lastSavedJSON = useRef('');
+  const dirtyRef = useRef(false);
+  const savingRef = useRef(false);
 
   // ---- admin režim (?admin=1, prípadne chránený kódom z env)
   const [adminParam] = useState(() => new URLSearchParams(window.location.search).get('admin') === '1');
@@ -96,8 +104,10 @@ export default function App() {
 
   const loadDestinations = useCallback(async (preferFresh = false) => {
     const { data, source } = await fetchDestinations(preferFresh);
-    setDestData(data);
     setDestSource(source);
+    if (dirtyRef.current) return; // nechcem prepísať rozpracované zmeny admina
+    setDestData(data);
+    lastSavedJSON.current = JSON.stringify(data);
   }, []);
 
   useEffect(() => {
@@ -149,7 +159,7 @@ export default function App() {
       setDestData((prev) => ({ ...prev, destinations: [...(prev.destinations || []), d] }));
       setAdding(false);
       setSelectedId(d.id);
-      flash('Cieľ pridaný – doplň názov, média a ulož zmeny.');
+      flash('Cieľ pridaný – doplň názov a médiá (uloží sa samo).');
       return;
     }
     if (picking) {
@@ -180,29 +190,44 @@ export default function App() {
   const updateDestData = (next) => {
     setDestData(next);
     saveLocal(next);
+    dirtyRef.current = true;
     setDestSource((s) => (s === 'github' ? 'github' : 'cache'));
   };
 
-  const saveDestinations = async () => {
+  /** Automatické uloženie – zavolá sa chvíľu po poslednej zmene. */
+  const autosave = useCallback(async () => {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
-    setStatus('');
+    setSaveState('saving');
     try {
-      await commitDestinations(destData);
-      setDestSource('github');
+      const saved = await commitDestinations(destDataRef.current);
+      lastSavedJSON.current = JSON.stringify(saved);
+      dirtyRef.current = false;
+      setSaveState('saved');
+      setSavedAt(new Date());
       setShowJson(false);
-      setStatus(
-        NTFY_TOPIC
-          ? '✅ Uložené – užívatelia to uvidia okamžite.'
-          : '✅ Uložené do GitHubu – užívateľ to uvidí do ~2 minút.',
-      );
-      await loadDestinations();
+      setSaveError('');
+      setDestSource('github');
     } catch (e) {
+      setSaveState('error');
+      setSaveError(e.message);
       setShowJson(true);
-      setStatus(`⚠️ ${e.message} Zmeny sú uložené len v tomto prehliadači.`);
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
-  };
+  }, []);
+
+  // zmena → automatické uloženie (debounce)
+  useEffect(() => {
+    if (!isAdmin) return undefined;
+    const json = JSON.stringify(destData);
+    if (json === lastSavedJSON.current) return undefined;
+    dirtyRef.current = true;
+    const t = setTimeout(autosave, 1200);
+    return () => clearTimeout(t);
+  }, [destData, isAdmin, autosave]);
 
   const selectedTrack = useMemo(
     () => tracks.find((t) => t.id === selectedTrackId) || null,
@@ -465,13 +490,15 @@ export default function App() {
               admin={isAdmin}
               source={destSource}
               saving={saving}
-              status={status}
+              saveState={saveState}
+              savedAt={savedAt}
+              saveError={saveError}
               selectedId={selectedId}
               adding={adding}
               onToggleAdding={() => setAdding((v) => !v)}
               onRefresh={() => loadDestinations(true)}
               onChange={updateDestData}
-              onSave={saveDestinations}
+              onSaveNow={autosave}
               onSelect={(d) => setSelectedId(d.id === selectedId ? null : d.id)}
               onFocus={(d) => {
                 setCenter([d.lat, d.lng]);
@@ -487,9 +514,10 @@ export default function App() {
               }}
             />
 
-            {isAdmin && showJson && (
+            {isAdmin && saveState === 'error' && (
               <div className="card">
-                <h2>Zmeny nie je kam uložiť – skopíruj JSON</h2>
+                <h2>Zmeny sa neuložili – skopíruj JSON</h2>
+                <p className="error">{saveError}</p>
                 <p className="muted small">
                   Vlož ho do súboru <code>public/destinations.json</code> v repozitári (alebo zadaj GitHub token
                   vyššie a ulož priamo z appky).

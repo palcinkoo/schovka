@@ -233,3 +233,13 @@ body {
 
 .schovka-pin--dest { background: #dc2626; }
 .schovka-pin--dest-hidden { background: #94a3b8; font-size: 13px; }
+
+/* ---------------------------------------------- automatické ukladanie */
+.autostatus { margin-top: 8px; }
+.chip {
+  display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 999px;
+  background: #f1f5f9; border: 1px solid var(--border); color: #475569;
+}
+.chip--ok { background: #dcfce7; border-color: #bbf7d0; color: #166534; }
+.chip--busy { background: #eff6ff; border-color: #bfdbfe; color: #1e3a8a; }
+.chip--warn { background: #fef9c3; border-color: #fde047; color: #713f12; }

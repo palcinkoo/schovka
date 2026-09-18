@@ -27,7 +27,8 @@ uloží do histórie. Odtiaľ si ju vieš znova zobraziť alebo exportovať ako 
 
 **Ciele s fotkou/videom (dve roly)**
 - **organizátor (admin)** pridáva ciele klikom do mapy, píše k nim popis, pridáva **fotky a videá**
-  a rozhoduje, či sú užívateľovi **viditeľné**
+  a prepína, či sú užívateľovi **viditeľné** – **všetko sa ukladá automaticky**, žiadne tlačidlo
+  „Uložiť" (zmena sa commitne do GitHubu ~1 s po poslednej úprave)
 - **užívateľ** vidí na mape **iba značky, ktoré organizátor povolil** – skryté ciele sú preňho úplne
   neviditeľné (žiadny názov, žiadna fotka)
 - detail cieľa = názov, popis, fotka/video (YouTube/Vimeo/Drive/priame súbory) + „Navigovať sem"
@@ -83,14 +84,21 @@ V admin režime k cieľu pridáš **odkaz** – aplikácia rozpozná typ a zobra
 > Fotku nahraj napr. na Imgur/Drive/Instagram a vlož odkaz – prípadne mi súbor pošli do chatu
 > a ja ho commitnem do `public/media/` (bude dostupný na `https://…/media/fotka.jpg`).
 
-### Ako uložiť zmeny z appky
+### Ukladanie – nech to robí appka
+
+**Nič nemusíš ukladať.** Každá zmena (nový cieľ, názov, popis, médium, prepnutie viditeľnosti,
+zmazanie) sa **automaticky** odošle do GitHubu približne **1 sekundu po poslednej úprave** a
+odošle ping užívateľom. Stav vidíš v paneli cieľov: `⏳ ukladám…` → `✓ uložené 16:12:33`.
+
+Jediné, čo treba spraviť raz:
 
 1. V admin režime rozbaľ **🔑 GitHub token** a vlož **fine-grained token**:
    *Repository access → Only select repositories → schovka*, *Permissions → Contents: Read and write*.
    Token sa uloží **len v tvojom prehliadači** (do repozitára sa nikdy nedostane).
-2. Klikni **💾 Uložiť zmeny** → appka commitne `public/destinations.json` a odošle ping →
-   užívateľ to uvidí **do 1 – 2 sekúnd**.
-3. Bez tokenu appka zmeny uloží len lokálne a ponúkne ti **JSON na skopírovanie** do súboru.
+2. Hotovo – odteraz sa všetko ukladá samo. Bez tokenu appka zmeny uloží len lokálne, zobrazí
+   `⚠ neuložené` a ponúkne **JSON na skopírovanie** do `public/destinations.json`.
+
+> Počas písania sa zmeny neposielajú po každom písmene – appka počká ~1 s, kým prestaneš.
 
 ### Admin režim
 
