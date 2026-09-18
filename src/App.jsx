@@ -511,6 +511,7 @@ export default function App() {
               onTokenChange={(v) => {
                 setTokenState(v);
                 setToken(v);
+                if (v.trim() && dirtyRef.current) setTimeout(autosave, 300);
               }}
             />
 

@@ -104,15 +104,31 @@ export default function DestinationsPanel({
                   onChange={(e) => onTokenChange(e.target.value)}
                 />
               </label>
+              <ol className="steps-compact">
+                <li>
+                  Otvor{' '}
+                  <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer noopener">
+                    <strong>vytvorenie tokenu</strong>
+                  </a>{' '}
+                  (prihlás sa, ak treba)
+                </li>
+                <li>
+                  <strong>Repository access:</strong> <em>Only select repositories</em> → vyber{' '}
+                  <strong>schovka</strong>
+                </li>
+                <li>
+                  <strong>Permissions → Contents:</strong> prepni na{' '}
+                  <strong>Read and write</strong> ⚠️ (predvolene je „Read-only", to nestačí)
+                </li>
+                <li>Dole daj <strong>Generate token</strong> → skopíruj <code>github_pat_…</code> a vlož sem</li>
+              </ol>
               <p className="muted small">
-                Fine-grained token → <strong>Only select repositories: schovka</strong> →
-                {' '}
-                <strong>Contents: Read and write</strong>. Bez neho zmeny uložíš len lokálne (appka ti
-                ponúkne JSON na skopírovanie do{' '}
+                Token zostane <strong>len v tomto prehliadači</strong> (nedostane sa do repozitára ani k
+                užívateľovi). Bez neho sa zmeny uložia len sem a appka ti ponúkne JSON na skopírovanie do{' '}
                 <a href={REPO_URL} target="_blank" rel="noreferrer noopener">
                   destinations.json
                 </a>
-                ).
+                .
               </p>
             </div>
           )}
