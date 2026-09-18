@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-18T16:40:09.043Z",
+  "updated_at": "2026-09-18T16:42:09.340Z",
   "destinations": [
     {
       "id": "demo-fontana",
@@ -7,13 +7,8 @@
       "note": "Ukážkový cieľ – pri fontáne. Zmeň ho alebo pridaj vlastný v admin režime.",
       "lat": 48.8103,
       "lng": 17.1631,
-      "visible": true,
-      "media": [
-        {
-          "type": "image",
-          "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Holi%C4%8D_-_n%C3%A1mestie.jpg/640px-Holi%C4%8D_-_n%C3%A1mestie.jpg"
-        }
-      ]
+      "visible": false,
+      "media": []
     },
     {
       "id": "demo-skryty",
@@ -21,6 +16,15 @@
       "note": "Tento cieľ užívateľ nevidí, kým ho v admin režime nepovolíš.",
       "lat": 48.8152,
       "lng": 17.1699,
+      "visible": false,
+      "media": []
+    },
+    {
+      "id": "84e4335a-8849-45ed-b941-0164595f9ff2",
+      "name": "Nový cieľ",
+      "note": "",
+      "lat": 48.878963414468906,
+      "lng": 18.045400857934638,
       "visible": false,
       "media": []
     }
